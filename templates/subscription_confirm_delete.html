@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Confirm Deletion</h2>
+    <p>Are you sure you want to delete the subscription for <strong>{{ subscription.email }}</strong>?</p>
+    <form method="POST" action="{% url 'subscription_delete' subscription.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'subscription_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

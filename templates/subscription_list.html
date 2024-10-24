@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Manage Subscriptions</h2>
+
+    <!-- Add New Subscription Form -->
+    <div class="mb-4">
+        <h4>Add New Subscription</h4>
+        <form method="POST" action="{% url 'subscription_create' %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Subscription</button>
+        </form>
+    </div>
+
+    <!-- Subscription List -->
+    <div class="mt-4">
+        <h4>Subscription List</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscription in subscriptions %}
+                <tr>
+                    <td>{{ subscription.email }}</td>
+                    <td>
+                        <a href="{% url 'subscription_edit' subscription.id %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'subscription_delete' subscription.id %}" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">No subscriptions found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

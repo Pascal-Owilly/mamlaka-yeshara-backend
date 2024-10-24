@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Subscription</h2>
+
+    <!-- Subscription Edit Form -->
+    <form method="POST" action="{% url 'subscription_edit' form.instance.id %}">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Subscription</button>
+        <a href="{% url 'subscription_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

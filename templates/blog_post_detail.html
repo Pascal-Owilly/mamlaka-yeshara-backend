@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="blog-detail">
+        <!-- Blog Title -->
+        <h1 class="h3">{{ post.title }}</h1>
+
+        <!-- Blog Metadata -->
+        <p class="text-muted">
+            <i class="fas fa-user"></i> By {{ post.author }}
+            <span class="mx-2">|</span>
+            <i class="fas fa-calendar-alt"></i> {{ post.created_at|date:"F j, Y" }}
+        </p>
+
+        <!-- Blog Image -->
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Blog Image" class="img-fluid my-3 rounded shadow-sm">
+        {% endif %}
+
+        <!-- Blog Video -->
+        {% if post.video %}
+            <video controls class="img-fluid my-3 rounded shadow-sm">
+                <source src="{{ post.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% endif %}
+
+        <!-- Blog Content -->
+        <div class="content mt-4">
+            {{ post.content|safe }}
+        </div>
+
+        <!-- Edit and Delete Buttons -->
+        <div class="mt-4">
+            <a href="{% url 'blog_post_update' post.id %}" class="btn btn-warning mr-2">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'blog_post_delete' post.id %}" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Delete
+            </a>
+        </div>
+    </div>
+{% endblock %}

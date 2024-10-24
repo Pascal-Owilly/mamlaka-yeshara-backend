@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>New Post from Mamlaka</title>
+</head>
+<body>
+    <h1>{{ blog_post.title }}</h1>
+    <p>{{ blog_post.excerpt }}</p>
+    {% if blog_post.image %}
+        <img src="{{ blog_post.image.url }}" alt="{{ blog_post.title }}">
+    {% endif %}
+    <p>Read more at our blog.</p>
+    <p>&copy; {{ current_year }} Mamlaka Hub & Spoke </p>
+</body>
+</html>

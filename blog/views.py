@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from rest_framework import generics
-from .models import BlogPost, Subscription, ContactUs
+from .models import BlogPost, Subscription, ContactUs, Testimonial
 from .serializers import BlogPostSerializer, SubscriptionSerializer, ContactUsSerializer
 import datetime
 from rest_framework import status
@@ -17,15 +17,18 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserRegistrationSerializer
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+
+
 
 class BlogPostListCreateAPIView(generics.ListCreateAPIView):
     queryset = BlogPost.objects.all().order_by('-id')
     serializer_class = BlogPostSerializer
 
     def perform_create(self, serializer):
-        # Save the blog post instance
         instance = serializer.save()
-        # Notify all subscribers about the new blog post
         self.notify_subscribers(instance)
 
     def notify_subscribers(self, blog_post):
@@ -51,6 +54,28 @@ class BlogPostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class SubscriptionCreateAPIView(generics.CreateAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
+
+    def create(self, request, *args, **kwargs):
+        # Check if a subscription with the provided email already exists
+        email = request.data.get('email')
+        if Subscription.objects.filter(email=email).exists():
+            return Response(
+                {"status": "error", "message": "This email is already subscribed."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            # If the email does not exist, create a new subscription
+            super().create(request, *args, **kwargs)
+            return Response(
+                {"status": "success", "message": "Thank you for subscribing!"},
+                status=status.HTTP_201_CREATED
+            )
+        except ValidationError:
+            # Handle validation errors explicitly
+            return Response(
+                {"status": "error", "message": "There was an error with your subscription. Please try again."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     def perform_create(self, serializer):
         # Save the subscription instance
@@ -79,6 +104,21 @@ class ContactUsCreateAPIView(generics.CreateAPIView):
     queryset = ContactUs.objects.all()
     serializer_class = ContactUsSerializer
 
+    def create(self, request, *args, **kwargs):
+        try:
+            # Attempt to create the contact message
+            super().create(request, *args, **kwargs)
+            return Response(
+                {"status": "success", "message": "Your message has been sent successfully."},
+                status=status.HTTP_201_CREATED
+            )
+        except ValidationError:
+            # Handle validation errors explicitly
+            return Response(
+                {"status": "error", "message": "There was an error sending your message. Please try again."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     def perform_create(self, serializer):
         # Save the contact message instance
         instance = serializer.save()
@@ -99,7 +139,7 @@ class ContactUsCreateAPIView(generics.CreateAPIView):
         email_message = EmailMultiAlternatives(subject, plain_message, from_email, [to_email])
         email_message.attach_alternative(html_message, "text/html")
         email_message.send()
-            
+
 class ContactUsListAPIView(generics.ListAPIView):
     queryset = ContactUs.objects.all().order_by('-created_at')
     serializer_class = ContactUsSerializer
@@ -120,8 +160,53 @@ class LogoutView(APIView):
             # Invalidate the refresh token
             token = RefreshToken(refresh_token)
             token.blacklist()  # Blacklisting the token
-            
+
             return Response({'detail': 'Logout successful.'}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+from .serializers import TestimonialSerializer
+
+class TestimonialListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Testimonial.objects.all().order_by('-created_at')
+    serializer_class = TestimonialSerializer
+
+class TestimonialDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer
+
+# views.py
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from rest_framework.decorators import api_view
+from .models import DemoRequest
+from .serializers import DemoRequestSerializer
+
+@csrf_exempt
+@api_view(['POST'])
+def request_demo(request):
+    serializer = DemoRequestSerializer(data=request.data)
+
+    if serializer.is_valid():
+        demo_request = serializer.save()  # Save the demo request
+
+        # Send email notification
+        try:
+            send_mail(
+                f'New Demo Request for {demo_request.projectTitle}',  # Use project title here
+                f"A new demo request has been received from {demo_request.name}.\n\n"
+                f"Email: {demo_request.email}\n"
+                f"Project Title: {demo_request.projectTitle}\n"  # Include project title in the email
+                f"Message: {demo_request.message}",
+                settings.DEFAULT_FROM_EMAIL,
+                ['owillypascal@gmail.com', 'mariallugare@gmail.com', 'intellima.tech@gmail.com', 'pasclouma54@gmal.com'],
+                fail_silently=False,
+            )
+            return JsonResponse({'message': 'Demo request sent successfully!'}, status=200)
+        except Exception as e:
+            return JsonResponse({'message': 'Failed to send demo request.', 'error': str(e)}, status=500)
+
+    return JsonResponse({'message': 'Invalid data.', 'errors': serializer.errors}, status=400)
 

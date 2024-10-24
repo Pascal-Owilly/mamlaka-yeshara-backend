@@ -26,18 +26,18 @@ SECRET_KEY = 'django-insecure-ntx0x#3*^+vbttcaeme2yq8lgmkl(9te8^7%3lmz1%lrnjwq9d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['testmanagement.pythonanywhere.com', 'mam-laka.com', 'owilly.pythonanywhere.com']
 
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587 
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True  # Set to False if your server doesn't use TLS
-# EMAIL_HOST_USER = 'intellima.tech@gmail.com'  
-# EMAIL_HOST_PASSWORD = 'txqerssmxheiyruz'
-EMAIL_HOST_USER = 'pascalouma54@gmail.com'
-EMAIL_HOST_PASSWORD = 'ksbmfjawgonkjjti'
+EMAIL_HOST_USER = 'intellima.tech@gmail.com'
+EMAIL_HOST_PASSWORD = 'txqerssmxheiyruz'
+# EMAIL_HOST_USER = 'pascalouma54@gmail.com'
+# EMAIL_HOST_PASSWORD = 'ksbmfjawgonkjjti'
 # EMAIL_HOST_USER = 'pascal.owilly@student.moringaschool.com'
 # EMAIL_HOST_PASSWORD = 'ymxllqbalildvjri'
 
@@ -61,11 +61,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'blog',  
+    'blog',
     'yeshara',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',  # Optional for token blacklisting
-    'rest_framework_simplejwt',
 
 ]
 
@@ -104,7 +103,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -175,3 +174,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirects to the login page after logout
+
+LOGIN_REDIRECT_URL = '/'  # Redirect all users to the homepage after login
+
+

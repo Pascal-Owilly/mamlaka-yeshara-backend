@@ -1,10 +1,20 @@
 from rest_framework import serializers
 from .models import BlogPost, ContactUs, Subscription
+from django.conf import settings
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
 
 class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
-        fields = '__all__'
+        fields = ['id', 'title', 'image', 'video', 'excerpt', 'created_at', 'user']
+
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +52,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+from .models import Testimonial
+
+class TestimonialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Testimonial
+        fields = ['id', 'user', 'profile_image', 'client_name', 'client_text', 'created_at']
+
+
+from .models import DemoRequest
+
+class DemoRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DemoRequest
+        fields = ['name', 'email', 'message', 'projectTitle']  # Include projectTitle
+

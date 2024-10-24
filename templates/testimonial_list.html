@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Manage Testimonials</h2>
+<a href="{% url 'add_testimonial' %}" class="btn btn-primary mb-3">Add New Testimonial</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Client Name</th>
+            <th>Client Text</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for testimonial in testimonials %}
+        <tr>
+            <td>{{ testimonial.client_name }}</td>
+            <td>{{ testimonial.client_text|slice:":100" }}...</td>
+            <td>{{ testimonial.created_at }}</td>
+            <td>
+                <a href="{% url 'testimonial_update' testimonial.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'testimonial_delete' testimonial.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
