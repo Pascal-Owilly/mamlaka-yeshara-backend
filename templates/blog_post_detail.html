@@ -1,13 +1,123 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<style>
+    /* Blog Detail Styles */
+    .blog-detail {
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: #333;
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .blog-detail h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d2d2d;
+    }
+
+    .blog-detail .text-muted {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .blog-detail .img-fluid {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+    }
+
+    .blog-detail .content {
+        margin-top: 1.5rem;
+        line-height: 1.6;
+        font-size: 1rem;
+        color: #4a4a4a;
+    }
+
+    /* Section Styling */
+    .blog-detail .section {
+        margin-bottom: 1.5rem;
+    }
+
+    .blog-detail .section h4 {
+        font-size: 1.4rem;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .blog-detail .section img,
+    .blog-detail .section video {
+        border-radius: 8px;
+        margin-top: 0.8rem;
+    }
+
+    /* Video Styling */
+    video {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+    }
+
+    /* Button Styling */
+    .btn {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning {
+        color: #fff;
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+    }
+
+    .btn-danger {
+        color: #fff;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    /* Smooth Hover Effects */
+    .btn:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 576px) {
+        .blog-detail h1 {
+            font-size: 1.6rem;
+        }
+        .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+    }
+</style>
+
     <div class="blog-detail">
         <!-- Blog Title -->
         <h1 class="h3">{{ post.title }}</h1>
 
         <!-- Blog Metadata -->
         <p class="text-muted">
-            <i class="fas fa-user"></i> By {{ post.author }}
+            <i class="fas fa-user"></i> By {{ post.user.username }}
             <span class="mx-2">|</span>
             <i class="fas fa-calendar-alt"></i> {{ post.created_at|date:"F j, Y" }}
         </p>
@@ -25,16 +135,30 @@
             </video>
         {% endif %}
 
-        <!-- Blog Content -->
+        <!-- Blog Sections -->
         <div class="content mt-4">
-            {{ post.content|safe }}
+            {% for section in post.sections %}
+                <div class="section">
+                    <h4>{{ section.type }}</h4>
+                    <p>{{ section.content }}</p>
+                    {% if section.image %}
+                        <img src="{{ section.image }}" alt="{{ section.type }} Image" class="img-fluid my-3 rounded shadow-sm">
+                    {% endif %}
+                    {% if section.video %}
+                        <video controls class="img-fluid my-3 rounded shadow-sm">
+                            <source src="{{ section.video }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
 
         <!-- Edit and Delete Buttons -->
         <div class="mt-4">
-            <a href="{% url 'blog_post_update' post.id %}" class="btn btn-warning mr-2">
+            <!-- <a href="{% url 'blog_post_update' post.id %}" class="btn btn-warning mr-2">
                 <i class="fas fa-edit"></i> Edit
-            </a>
+            </a> -->
             <a href="{% url 'blog_post_delete' post.id %}" class="btn btn-danger">
                 <i class="fas fa-trash-alt"></i> Delete
             </a>

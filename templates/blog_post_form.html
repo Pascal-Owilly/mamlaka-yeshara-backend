@@ -1,28 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h2 class="mb-4">Update Blog Post</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
+<style>
+    body {
+    background-color: #f8f9fa; /* Light background for the entire page */
+}
 
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    <ul>
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        {% endfor %}
-                    </ul>
+.container {
+    max-width: 800px; /* Limit the maximum width for better readability */
+}
+
+.section-item {
+    transition: box-shadow 0.2s; /* Smooth transition for hover effect */
+}
+
+.section-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Elevate section on hover */
+}
+
+</style>
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Update Blog Post</h2>
+    <form method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow">
+        {% csrf_token %}
+        
+        <!-- Displaying form fields -->
+        {{ form.as_p }}
+
+        <hr class="my-4">
+
+        <div id="section-container">
+            {% for section in sections %}
+                <div class="section">
+                    <select name="section_type_{{ forloop.counter0 }}" class="select-field">
+                        <option value="content" {% if section.type == "content" %}selected{% endif %}>Content</option>
+                        <option value="image" {% if section.type == "image" %}selected{% endif %}>Image</option>
+                        <option value="video" {% if section.type == "video" %}selected{% endif %}>Video</option>
+                    </select>
+                    <textarea name="content_{{ forloop.counter0 }}" placeholder="Enter your content here..." rows="4" class="input-field textarea">{{ section.content }}</textarea>
+                    <input type="file" name="image_{{ forloop.counter0 }}" class="file-input">
+                    <input type="file" name="video_{{ forloop.counter0 }}" class="file-input">
+                    {% if section.image %}
+                        <p>Current Image: {{ section.image }}</p>
+                    {% endif %}
+                    {% if section.video %}
+                        <p>Current Video: {{ section.video }}</p>
+                    {% endif %}
                 </div>
-            {% endif %}
+            {% endfor %}
+        </div>
+    
+        <input type="hidden" name="section_count" value="{{ sections|length }}">
 
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{% url 'blog_post_list' %}" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-        </form>
-    </div>
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'blog_post_list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+
 {% endblock %}

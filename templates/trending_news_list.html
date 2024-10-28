@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Trending News</h1>
+<div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'trending_news_create' %}" class="btn btn-primary">Add Trending News</a>
+</div>
+<div class="row">
+    {% if trending_news %}
+        {% for news in trending_news %}
+        <div class="col-md-12 mb-4">
+            <h5>{{ news.title }}</h5>
+            <p>Author: {{ news.author }}</p>
+            <a href="{% url 'trending_news_detail' news.pk %}" class="btn btn-info">View Details</a>
+            <a href="{% url 'trending_news_update' news.pk %}" class="btn btn-warning">Edit</a>
+            <form action="{% url 'trending_news_delete' news.pk %}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <p>No trending news found.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this trending news item?");
+    }
+</script>
+{% endblock %}

@@ -1,18 +1,269 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h2>Add New Blog Post</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+
+<style>
+    /* Base Styling */
+    .form-container {
+        max-width: 600px;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #773697;
+    }
+
+    /* Form Group */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-field, .select-field, .file-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        margin-bottom: 10px;
+        transition: border-color 0.3s ease;
+    }
+
+    .input-field:focus, .select-field:focus, .file-input:focus {
+        border-color: #773697;
+        outline: none;
+    }
+
+    /* Textarea */
+    .textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0.5rem 0;
+    }
+
+    .add-section-btn {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+    }
+
+    .add-section-btn:hover {
+        background: linear-gradient(135deg, #5a0dbf, #1f67e8);
+    }
+
+    .submit-btn {
+        background: #773697;
+        color: white;
+        width: 100%;
+    }
+
+    .submit-btn:hover {
+        background: #6b2d93;
+    }
+
+    /* Section Styles */
+    .section {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fafafa;
+    }
+
+    /* Modal */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        padding-top: 60px;
+        text-align: center; /* Center the modal content */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto; /* Center the modal */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+        max-width: 600px; /* Maximum width for larger screens */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #333;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Media Styles for Images and Videos */
+    #previewSections img,
+    #previewSections video {
+        max-width: 100%; /* Responsive images/videos */
+        height: auto; /* Maintain aspect ratio */
+        display: block; /* Centering */
+        margin: 10px auto; /* Spacing */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            padding: 10px 15px;
+        }
+    }
+
+    /* Additional Styling for Buttons */
+    .submit-btn {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+
+    /* Optional: Use Bootstrap classes for better spacing and layout */
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-center {
+        justify-content: center; /* Center the buttons */
+    }
+
+    .me-2 {
+        margin-right: 0.5rem; /* Add space between buttons */
+    }
+
+</style>
+
+<div class="form-container" style="margin-top: 50px;">
+    <h4>Create a New Blog Post</h4>
+    <form id="blogPostForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <input type="text" name="title" id="title" placeholder="Blog Title" required class="input-field">
+        </div>
+
+        <div id="section-container">
+            <!-- Dynamically added sections will go here -->
+        </div>
+
+        <input type="hidden" name="total_sections" id="total_sections" value="0">
+
+        
+        <button type="button" onclick="addSection()" class="btn add-section-btn">Add Section</button>
+        <div class="d-flex justify-content-center m-auto mt-4">
+            <button type="button" onclick="previewPost()" class="btn btn-sm submit-btn me-2" style="width: 120px;">Preview Post</button>
+            <button type="submit" class="btn btn-sm btn-success submit-btn" style="width: 120px;">Create Blog Post</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal for Preview -->
+<div id="previewModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Blog Post Preview</h2>
+        <h3 id="previewTitle"></h3>
+        <div id="previewSections"></div>
     </div>
+</div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function addSection() {
+        const sectionCount = document.getElementById('total_sections').value;
+        const newSectionIndex = sectionCount;  // Current count of sections
+
+        const sectionHTML = `
+            <div class="section">
+                <select name="section_type_${newSectionIndex}" class="select-field">
+                    <option value="content">Content</option>
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                </select>
+                <textarea name="content_${newSectionIndex}" placeholder="Enter your content here..." rows="4" class="input-field textarea"></textarea>
+                <input type="file" name="image_${newSectionIndex}" class="file-input">
+                <input type="file" name="video_${newSectionIndex}" class="file-input">
+            </div>
+        `;
+        
+        document.getElementById('section-container').insertAdjacentHTML('beforeend', sectionHTML);
+        document.getElementById('total_sections').value = parseInt(sectionCount) + 1;
+    }
+
+    function previewPost() {
+        // Get title
+        const title = document.getElementById('title').value;
+        document.getElementById('previewTitle').innerText = title;
+
+        // Get sections
+        const sectionCount = document.getElementById('total_sections').value;
+        const previewSectionsContainer = document.getElementById('previewSections');
+        previewSectionsContainer.innerHTML = ''; // Clear previous preview
+
+        for (let i = 0; i < sectionCount; i++) {
+            const sectionType = document.querySelector(`select[name="section_type_${i}"]`).value;
+            const content = document.querySelector(`textarea[name="content_${i}"]`).value;
+            let sectionHTML = `<div><strong>${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}:</strong> ${content}</div>`;
+
+            // Check for image
+            const imageInput = document.querySelector(`input[name="image_${i}"]`);
+            if (imageInput.files.length > 0) {
+                const fileURL = URL.createObjectURL(imageInput.files[0]);
+                sectionHTML += `<img src="${fileURL}" alt="Image preview">`;
+            }
+
+            // Check for video
+            const videoInput = document.querySelector(`input[name="video_${i}"]`);
+            if (videoInput.files.length > 0) {
+                const fileURL = URL.createObjectURL(videoInput.files[0]);
+                sectionHTML += `<video controls><source src="${fileURL}" type="video/mp4">Your browser does not support the video tag.</video>`;
+            }
+
+            previewSectionsContainer.insertAdjacentHTML('beforeend', sectionHTML);
+        }
+
+        // Display modal
+        document.getElementById('previewModal').style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById('previewModal').style.display = "none";
+    }
+</script>
+
 {% endblock %}
-

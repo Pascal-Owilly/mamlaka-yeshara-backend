@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{% if feature_news %}Edit Feature News{% else %}Add Feature News{% endif %}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                {% if feature_news %}Update{% else %}Create{% endif %}
+            </button>
+            <a href="{% url 'feature_news_list' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

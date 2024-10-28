@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .content {
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4">{{ trending_news.title }}</h1>
+    <p class="text-muted"><strong>Author:</strong> {{ trending_news.author }}</p>
+    <p class="text-muted"><strong>Published on:</strong> {{ trending_news.created_at|date:"F j, Y" }}</p>
+
+    {% if trending_news.image %}
+        <div class="mb-4">
+            <img src="{{ trending_news.image.url }}" alt="{{ trending_news.title }}" class="img-fluid rounded shadow">
+        </div>
+    {% endif %}
+
+    <div class="content mb-4">
+        <h4>Content</h4>
+        <p>{{ trending_news.content }}</p>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <div>
+            <a href="{% url 'trending_news_update' trending_news.pk %}" class="btn btn-warning">Edit</a>
+            <form action="{% url 'trending_news_delete' trending_news.pk %}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        <a href="{% url 'trending_news_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this trending news item?");
+    }
+</script>
+{% endblock %}

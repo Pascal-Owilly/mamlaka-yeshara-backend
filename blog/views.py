@@ -21,8 +21,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
-
-
 class BlogPostListCreateAPIView(generics.ListCreateAPIView):
     queryset = BlogPost.objects.all().order_by('-id')
     serializer_class = BlogPostSerializer

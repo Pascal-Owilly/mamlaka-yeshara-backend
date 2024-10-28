@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Manage Featured News</h2>
+    <hr>
+
+    <!-- Button to add a new featured news item -->
+    <div class="text-end mb-3">
+        <a href="{% url 'feature_news_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New News
+        </a>
+    </div>
+
+    <!-- Featured News Table -->
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Author</th>
+                <th>Date Published</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for news in feature_news %}
+                <tr>
+                    <td>{{ news.title }}</td>
+                    <td>{{ news.description }}</td>
+                    <td>{{ news.author }}</td>
+                    <td>{{ news.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <!-- Edit News -->
+                        <a href="{% url 'feature_news_update' news.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <!-- Delete News -->
+                        <form action="{% url 'feature_news_delete' news.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this news?');">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No featured news available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

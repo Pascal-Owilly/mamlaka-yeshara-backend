@@ -1,16 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>New Blog Post</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Blog Post</title>
+    <style>
+        /* Styling for buttons */
+        .section-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-buttons button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Styling for each section */
+        .section-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .remove-section {
+            color: red;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Form layout */
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ blog_post.title }}</h1>
-    <p>{{ blog_post.excerpt }}</p>
-    {% if blog_post.image %}
-        <img src="{{ blog_post.image.url }}" alt="{{ blog_post.title }}">
-    {% endif %}
-    <p>Read more at our blog.</p>
-    <p>&copy; {{ current_year }} Mamlaka</p>
+    <h1>Add Blog Post</h1>
+
+    <!-- Buttons to dynamically add sections -->
+    <div class="section-buttons">
+        <button type="button" onclick="addSection('title')">Add Title</button>
+        <button type="button" onclick="addSection('excerpt')">Add Excerpt</button>
+        <button type="button" onclick="addSection('content')">Add Content</button>
+        <button type="button" onclick="addSection('image')">Add Image</button>
+        <button type="button" onclick="addSection('video')">Add Video</button>
+    </div>
+
+    <!-- Form to submit blog post -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Dynamically added sections will appear here -->
+        <div id="sections"></div>
+
+        <!-- Hidden input to track the number of sections -->
+        <input type="hidden" name="total_sections" id="total_sections" value="0">
+
+        <button type="submit" class="submit-btn">Submit Blog Post</button>
+    </form>
+
+    <script>
+        let sectionIndex = 0;
+
+        function addSection(type) {
+            const sectionsDiv = document.getElementById('sections');
+            const totalSections = document.getElementById('total_sections');
+            const newSection = document.createElement('div');
+            newSection.className = 'section-container';
+            newSection.id = `section_${sectionIndex}`;
+
+            let sectionContent = '';
+            if (type === 'title') {
+                sectionContent = `
+                    <label for="title_${sectionIndex}">Title</label>
+                    <input type="text" name="title_${sectionIndex}" placeholder="Enter title" required>
+                `;
+            } else if (type === 'excerpt') {
+                sectionContent = `
+                    <label for="excerpt_${sectionIndex}">Excerpt</label>
+                    <textarea name="excerpt_${sectionIndex}" placeholder="Enter excerpt" required></textarea>
+                `;
+            } else if (type === 'content') {
+                sectionContent = `
+                    <label for="content_${sectionIndex}">Content</label>
+                    <textarea name="content_${sectionIndex}" placeholder="Enter full content" required></textarea>
+                `;
+            } else if (type === 'image') {
+                sectionContent = `
+                    <label for="image_${sectionIndex}">Image</label>
+                    <input type="file" name="image_${sectionIndex}" accept="image/*">
+                `;
+            } else if (type === 'video') {
+                sectionContent = `
+                    <label for="video_${sectionIndex}">Video</label>
+                    <input type="file" name="video_${sectionIndex}" accept="video/*">
+                `;
+            }
+
+            newSection.innerHTML = `
+                <div class="section-header">
+                    <h4>${type.charAt(0).toUpperCase() + type.slice(1)} Section</h4>
+                    <span class="remove-section" onclick="removeSection(${sectionIndex})">Remove</span>
+                </div>
+                ${sectionContent}
+            `;
+
+            sectionsDiv.appendChild(newSection);
+            sectionIndex++;
+            totalSections.value = sectionIndex;  // Update the hidden field's value
+        }
+
+        function removeSection(index) {
+            const section = document.getElementById(`section_${index}`);
+            section.remove();
+            sectionIndex--;
+            document.getElementById('total_sections').value = sectionIndex;
+        }
+    </script>
 </body>
 </html>

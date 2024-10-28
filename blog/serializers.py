@@ -10,10 +10,21 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name']
 
+
 class BlogPostSerializer(serializers.ModelSerializer):
+    sections_by_type = serializers.SerializerMethodField()
+
     class Meta:
         model = BlogPost
-        fields = ['id', 'title', 'image', 'video', 'excerpt', 'created_at', 'user']
+        fields = ['id', 'title', 'slug', 'image', 'video', 'created_at', 'user', 'sections_by_type']
+
+    def get_sections_by_type(self, obj):
+        sections_by_type = {choice[0]: [] for choice in BlogPost.SECTION_CHOICES}
+        for section in obj.sections:
+            section_type = section.get("type")
+            if section_type in sections_by_type:
+                sections_by_type[section_type].append(section)
+        return sections_by_type
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

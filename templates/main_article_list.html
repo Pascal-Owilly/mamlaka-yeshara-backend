@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<hr>
+<h1>Main Articles</h1>
+<div class="d-flex justify-content-end mb-3">
+    <a href="" class="btn btn-secondary"> THE MAIN ARTICLE CAN ONLY BE EDITED</a>
+</div>
+<div class="row">
+    {% if main_articles %}
+        {% for article in main_articles %}
+        <div class="col-md-12 mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{{ article.image.url }}" class="img-fluid" alt="{{ article.title }}" style="height: 300px; object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text">Author: {{ article.author }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'main_article_update' article.pk %}" class="btn btn-warning">Edit</a>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <p>No articles found.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,203 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Blog Posts</title>
     <!-- Bootstrap CSS -->
-    <!-- Add in your <head> section -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <!-- Custom Styles -->
-   <style>
-        /* Sidebar Styles */
+    <style>
+      /* Sidebar Styles */
+      #sidebar {
+        background-color: #862790 !important;
+        padding-top: 20px;
+        min-height: 100vh;
+        color: #ffffff;
+        transition: transform 0.3s ease-in-out;
+        font-family: "Courier New", Courier, monospace;
+        border-bottom: 3px solid #333 !important;
+      }
+
+      .btn-info {
+        background-color: #138496;
+        border-color: #117a8b;
+        box-shadow: 2px solid #333;
+      }
+      #sidebar h4 {
+        font-size: 24px;
+        margin-bottom: 30px;
+        color: #d9d9d9;
+      }
+
+      #line {
+        background-color: #333;
+        height: 3px;
+      }
+
+      #sidebar .nav-link {
+        color: #ffffff;
+        font-size: 18px;
+        padding: 10px 15px;
+        margin: 5px 0;
+        border-radius: 5px;
+      }
+
+      #sidebar .nav-link.active,
+      #sidebar .nav-link:hover {
+        background-color: #150c1a;
+        color: #ff7f50;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 767.98px) {
         #sidebar {
-            background-color: #3c1c1c;
-            padding-top: 20px;
-            min-height: 100vh;
-            color: #ffffff;
+          position: absolute;
+          width: 75%;
+          transform: translateX(-100%);
+        }
+        #sidebar.active {
+          transform: translateX(0);
+        }
+        #content {
+          margin-left: 0;
+        }
+      }
+
+      /* General page layout */
+      body {
+        background-color: #f7f9fc;
+        color: #333;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Header Styling */
+
+      h1 {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      a.btn-info {
+        background-color: #138496;
+        border-color: #117a8b;
+      }
+      a.btn-info:hover {
+        background-color: #138496;
+        border-color: #117a8b;
+      }
+
+      /* Table Styling */
+      .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .table {
+        margin-bottom: 0;
+      }
+
+      .thead-light th {
+        color: #495057;
+        font-weight: bold;
+        background-color: #e9ecef;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+      }
+
+      /* Action Buttons Styling */
+      .btn {
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        border-radius: 5px;
+      }
+
+      .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+      }
+      .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+      }
+
+      .btn-outline-warning {
+        color: #ffc107;
+        border-color: #ffc107;
+      }
+      .btn-outline-warning:hover {
+        background-color: #ffc107;
+        color: #212529;
+      }
+
+      .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+      }
+      .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: #fff;
+      }
+
+      /* Empty State Styling */
+      .text-center i {
+        color: #ffc107;
+        opacity: 0.7;
+      }
+
+      .text-muted {
+        font-size: 1rem;
+        color: #6c757d;
+      }
+
+      /* Smooth Hover Effects */
+      .btn-sm {
+        padding: 0.4rem 0.75rem;
+      }
+      .btn:hover {
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+      }
+
+      ul {
+        padding-left: 1.2em;
+      }
+
+      /* Utility Classes */
+      .shadow-sm {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      /* Blog Table Custom Styles */
+      .blog-table {
+        border-radius: 8px;
+      }
+
+      .table {
+        margin-bottom: 0; /* Remove margin at the bottom of the table */
+      }
+
+      /* Responsive Design */
+      @media (max-width: 576px) {
+        .navbar .navbar-brand {
+          font-size: 1.2rem; /* Increase navbar brand size on small screens */
         }
 
-        #sidebar h4 {
-            font-size: 24px;
-            margin-bottom: 30px;
+        .btn {
+          font-size: 0.8rem; /* Adjust button font size on small screens */
         }
-
-        #sidebar .nav-link {
-            color: #ffffff;
-            font-size: 18px;
-            padding: 10px 15px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-
-        #sidebar .nav-link.active {
-            background-color: #150c1a;
-            color: #ff7f50;
-        }
-
-        #sidebar .nav-link:hover {
-            background-color: #150c1a;
-            color: #ff7f50;
-        }
-
-        /* Main Content */
-        main h1 {
-            color: #333;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        /* Custom Styles for Blog Tables */
-        .blog-table {
-            margin-bottom: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .blog-table th, .blog-table td {
-            padding: 15px;
-            text-align: left;
-        }
-
-        .blog-table th {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .blog-table .btn {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .btn-logout {
-    background-color: transparent;
-    border: none;
-    color: #ffffff; /* Text color */
-    font-size: 16px; /* Adjust font size */
-    font-weight: 600; /* Bold text */
-    text-decoration: none; /* Remove underline */
-    padding: 10px 15px; /* Padding around text */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
-}
-
-.btn-logout:hover {
-    background-color: #ff7f50; /* Background color on hover */
-    color: #ffffff; /* Text color on hover */
-}
-
-.btn-logout i {
-    margin-right: 5px; /* Spacing between icon and text */
-}
-
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">
-                <div class="position-sticky">
-                    <h4 class="text-center text-white" style='font-size:18px'>Mamlaka Administration</h4>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{% url 'blog_post_list' %}">
-                                <i class="fas fa-blog"></i> Manage Blogs
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'testimonial_list' %}">
-                                <i class="fas fa-comments"></i> Manage Testimonials
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'subscription_list' %}">
-                                <i class="fas fa-envelope"></i> Manage Subscriptions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'contact_us_list' %}">
-                                <i class="fas fa-address-book"></i> Contact Us Messages
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                           <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </button>
-                        </form>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-4">
-               <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
-                   <h1 style='color: '#333'> Manage Blog Posts</h1>
-                <a href="{% url 'blog_post_create' %}" class="btn btn-info btn-sm">
-                    Add New Blog Post
+      <div class="row">
+        <!-- Sidebar with Toggle Button -->
+        <nav
+          id="sidebar"
+          class="col-md-3 col-lg-2 d-md-block sidebar bg-dark text-white"
+          style="z-index: 2; width: 100%"
+        >
+          <div class="position-sticky">
+            <a href="/">
+              <h4 class="text-center">Mamlaka Administration</h4>
+            </a>
+            <hr id="line" />
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="/">
+                  <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'main_article_list' %}">
+                  <i class="fas fa-comments"></i> Main Article
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'feature_news_list' %}">
+                  <i class="fas fa-blog"></i> Featured Blogs
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'trending_news_list' %}">
+                  <i class="fas fa-envelope"></i> Trendings Blogs
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'event_list' %}">
+                  <i class="fas fa-envelope"></i> News & Events
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'testimonial_list' %}">
+                  <i class="fas fa-comments"></i> Tetimonials
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'subscription_list' %}">
+                  <i class="fas fa-comments"></i> Subscriptions
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact_us_list' %}">
+                  <i class="fas fa-address-book"></i> Contact Us Messages
+                </a>
+              </li>
+              <!-- Additional Links -->
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_list' %}">
+                  <i class="fas fa-users"></i> User List
+                </a>
+              </li>
+
+              <hr id="line" style="background-color: #212529" />
+              <li class="nav-item">
+                <form
+                  action="{% url 'logout' %}"
+                  method="post"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link text-white">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main
+          role="main"
+          class="col-md-9 ms-sm-auto col-lg-10 px-4"
+          id="content"
+        >
+          <nav
+            class="navbar navbar-expand-lg navbar-light"
+            style="background-color: #862790"
+          >
+            <button
+              class="navbar-toggler"
+              type="button"
+              onclick="toggleSidebar()"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand ml-2 text-light" href="#"
+              >Manage Blog Posts</a
+            >
+            <div class="collapse navbar-collapse">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a
+                    href="{% url 'feature_news_create' %}"
+                    class="btn btn-info btn-sm ml-2"
+                  >
+                    Add New Featured Post
+                  </a>
+                </li>
+              </ul>
             </div>
+          </nav>
 
-
-                <!-- Content Area -->
-{% block content %}
-    {% if posts %}
-        {% for post in posts %}
-        <div class="blog-table">
-            <table class="table table-bordered mb-0">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Created At</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ post.title }}</td>
-                        <td>{{ post.author }}</td>
-                        <td>{{ post.created_at|date:"F j, Y" }}</td>
-                        <td>
-                            <a href="{% url 'blog_post_detail' post.id %}" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                            <a href="{% url 'blog_post_update' post.id %}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="{% url 'blog_post_delete' post.id %}" class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
+          <!-- Blog Post Management Content -->
+          {% block content %} {% if posts %}
+          <div
+            class="table-responsive blog-table shadow-sm mt-3"
+            style="overflow: scroll"
+          >
+            <table
+              class="table table-hover table-striped mb-0"
+              style="background-color: #ffffff; border-radius: 8px"
+            >
+              <thead class="thead-light">
+                <tr style="color: #333">
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Created At</th>
+                  <th>Sections</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for post in posts %}
+                <tr>
+                  <td class="align-middle">{{ post.title }}</td>
+                  <td class="align-middle">{{ post.user.username }}</td>
+                  <td class="align-middle">
+                    {{ post.created_at|date:"F j, Y" }}
+                  </td>
+                  <td class="align-middle">
+                    <ul class="mb-0 list-unstyled">
+                      {% for section in post.sections.all %}
+                      <li>{{ section.title }}</li>
+                      {% empty %}
+                      <li>No sections available</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td class="align-middle">
+                    <a
+                      href="{% url 'blog_post_edit' post.id %}"
+                      class="btn btn-outline-primary btn-sm mr-2"
+                      ><i class="fas fa-edit"></i> Edit</a
+                    >
+                    <form
+                      action="{% url 'blog_post_delete' post.id %}"
+                      method="post"
+                      style="display: inline"
+                    >
+                      {% csrf_token %}
+                      <button
+                        type="submit"
+                        class="btn btn-outline-danger btn-sm"
+                      >
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="text-center mt-5">
-            <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
-            <h4 class="mt-3">No Blog Posts Available</h4>
-            <p class="text-muted">It looks like there are no blog posts to display. Click the button above to add a new blog post.</p>
-        </div>
-    {% endif %}
-{% endblock %}
-            </main>
-        </div>
+          </div>
+          {% else %}
+          <div class="text-center mt-4">
+            <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+            <p class="text-muted">No blog posts available.</p>
+          </div>
+          {% endif %} {% endblock %}
+        </main>
+      </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+    </script>
+  </body>
 </html>

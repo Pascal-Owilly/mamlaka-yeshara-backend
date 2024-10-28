@@ -8,6 +8,7 @@ from django.contrib.auth.views import LogoutView, PasswordResetView, PasswordRes
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/blog/', include('blog.urls')),  # Include the blog app's URLs
+    path('api/blog/articles/', include('blog.urls_backup')),  # Include the blog app's URLs
     path('yeshara/', include('yeshara.urls')),
     path('', include('blog.template_urls')),  # Include the blog app's template URLs
     path('accounts/', include('django.contrib.auth.urls')),  # Include the built-in auth views

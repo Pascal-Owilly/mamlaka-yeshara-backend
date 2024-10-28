@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% if form.instance.pk %}Edit Trending News{% else %}Add Trending News{% endif %}</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'trending_news_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
